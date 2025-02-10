@@ -1,0 +1,23 @@
+service: flask-api
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1 # Change this to your preferred AWS region
+
+plugins:
+  - serverless-wsgi
+  - serverless-python-requirements
+
+custom:
+  wsgi:
+    app: app.app # Ensure this matches how your Flask app is initialized
+  pythonRequirements:
+    dockerizePip: true
+
+functions:
+  app:
+    handler: wsgi_handler.handler
+    events:
+      - http: ANY /
+      - http: ANY {proxy+}
