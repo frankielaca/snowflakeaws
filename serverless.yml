@@ -1,9 +1,11 @@
-service: flask-api
+service: gpt-snowflake-service  # Change this if you want a different service name
 
 provider:
   name: aws
-  runtime: python3.9
-  region: us-east-1 # Change this to your preferred AWS region
+  runtime: python3.13  # Ensure this matches your Python version
+  region: us-east-1  # Change to your preferred AWS region
+  memorySize: 256
+  timeout: 10
 
 plugins:
   - serverless-wsgi
@@ -11,13 +13,19 @@ plugins:
 
 custom:
   wsgi:
-    app: app.app # Ensure this matches how your Flask app is initialized
+    app: app.app  # Adjust if your app is named differently
   pythonRequirements:
     dockerizePip: true
 
 functions:
-  app:
+  api:
     handler: wsgi_handler.handler
     events:
       - http: ANY /
       - http: ANY {proxy+}
+
+package:
+  exclude:
+    - node_modules/**
+    - venv/**
+
